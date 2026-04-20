@@ -36,7 +36,8 @@ jobs:
           time-frame: monthly
 
       - name: Print cost summary
-        run: echo "Total estimated cost: ${{ steps.pricing.outputs.total-cost }} USD/month"
+        run: |
+          echo "Total estimated cost: ${{ steps.pricing.outputs.total-cost }} USD/month"
 
       - name: Terraform destroy
         if: always()
