@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://placehold.co/150x150" width="150" alt=">AWS Pricing AI Analyzer logo" />
+  <img src="https://raw.githubusercontent.com/nicoavila/aws-ai-pricing-analyzer/b84ee479b60fbf2c352620b027d30f5844ba4798/icon.png" width="150" alt=">AWS Pricing AI Analyzer logo" />
 </p>
 
 <h1 align="center">AWS Pricing AI Analyzer</h1>
