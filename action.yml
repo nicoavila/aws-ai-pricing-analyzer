@@ -1,0 +1,39 @@
+name: 'AWS Pricing Analyzer'
+description: 'Uses AI to analyze a Terraform plan and provide an approximate AWS infrastructure cost estimate'
+author: 'Nicolas Avila'
+
+inputs:
+  tfplan-path:
+    description: 'Path to the Terraform plan file (JSON format)'
+    required: true
+  aws-region:
+    description: 'AWS region for pricing lookup'
+    required: false
+    default: 'us-east-1'
+  time-frame:
+    description: 'Cost time-frame unit: hourly, monthly, or yearly'
+    required: false
+    default: 'monthly'
+  model:
+    description: 'OpenRouter model to use for analysis (e.g. openai/gpt-4o, anthropic/claude-sonnet-4-5)'
+    required: false
+    default: 'openai/gpt-4o'
+
+outputs:
+  total-cost:
+    description: 'Estimated total cost for the given time-frame'
+  cost-report:
+    description: 'Full cost analysis report as JSON'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    AWS_REGION: ${{ inputs.aws-region }}
+    TFPLAN_PATH: ${{ inputs.tfplan-path }}
+    TIME_FRAME: ${{ inputs.time-frame }}
+    OPENROUTER_MODEL: ${{ inputs.model }}
+
+branding:
+  icon: 'dollar-sign'
+  color: 'orange'

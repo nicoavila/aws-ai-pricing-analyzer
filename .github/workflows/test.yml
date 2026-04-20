@@ -1,0 +1,44 @@
+name: Test AWS Pricing Analyzer
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init & plan
+        working-directory: examples/terraform
+        run: |
+          terraform init
+          terraform plan -out=tfplan
+          terraform show -json tfplan > tfplan.json
+
+      - name: Run AWS Pricing Analyzer
+        id: pricing
+        uses: ./
+        with:
+          tfplan-path: examples/terraform/tfplan.json
+          aws-region: us-east-1
+          time-frame: monthly
+
+      - name: Print cost summary
+        run: echo "Total estimated cost: ${{ steps.pricing.outputs.total-cost }} USD/month"
+
+      - name: Terraform destroy
+        if: always()
+        working-directory: examples/terraform
+        run: terraform destroy -auto-approve
